@@ -3,17 +3,18 @@
     {
       "COLUMN": "enderecos.id",
       "ORIGINAL_TYPE": "serial",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "IS_AUTO_INCREMENT": true,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "nextval('enderecos_id_seq'::regclass)"
     },
     {
       "COLUMN": "enderecos.rua",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -21,7 +22,7 @@
     {
       "COLUMN": "enderecos.cidade",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -29,33 +30,33 @@
     {
       "COLUMN": "enderecos.usuario_id",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": true,
       "FOREIGN_KEY": true,
       "REFERENCE": "usuarios.id",
       "UPDATE_RULE": "CASCADE",
-      "DELETE_RULE": "CASCADE",
-      "UNIQUE": true
+      "DELETE_RULE": "CASCADE"
     }
   ],
   "exemplo": [
     {
       "COLUMN": "exemplo.id",
       "ORIGINAL_TYPE": "uuid",
-      "CLASS_TYPE": "UUID",
+      "CLASS_TYPE": "java.util.UUID",
       "SIZE": 2147483647,
       "PRECISION": 2147483647,
       "NULLABLE": false,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "gen_random_uuid()"
     },
     {
       "COLUMN": "exemplo.valor",
       "ORIGINAL_TYPE": "numeric",
-      "CLASS_TYPE": "BigDecimal",
-      "SIZE": 12,
-      "PRECISION": 10,
+      "CLASS_TYPE": "java.math.BigDecimal",
+      "SIZE": 14,
+      "PRECISION": 12,
       "SCALE": 2,
       "NULLABLE": true
     }
@@ -64,17 +65,18 @@
     {
       "COLUMN": "itens_pedido.id",
       "ORIGINAL_TYPE": "serial",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "IS_AUTO_INCREMENT": true,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "nextval('itens_pedido_id_seq'::regclass)"
     },
     {
       "COLUMN": "itens_pedido.nome_produto",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -82,7 +84,7 @@
     {
       "COLUMN": "itens_pedido.quantidade",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": true
@@ -90,7 +92,7 @@
     {
       "COLUMN": "itens_pedido.pedido_id",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": true,
@@ -104,17 +106,18 @@
     {
       "COLUMN": "categorias.id",
       "ORIGINAL_TYPE": "serial",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "IS_AUTO_INCREMENT": true,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "nextval('categorias_id_seq'::regclass)"
     },
     {
       "COLUMN": "categorias.nome",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -124,11 +127,12 @@
     {
       "COLUMN": "pedidos_categorias.pedido_id",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "PRIMARY_KEY": true,
+      "DEFAULT": null,
       "FOREIGN_KEY": true,
       "REFERENCE": "pedidos.id",
       "UPDATE_RULE": "CASCADE",
@@ -137,11 +141,12 @@
     {
       "COLUMN": "pedidos_categorias.categoria_id",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "PRIMARY_KEY": true,
+      "DEFAULT": null,
       "FOREIGN_KEY": true,
       "REFERENCE": "categorias.id",
       "UPDATE_RULE": "CASCADE",
@@ -152,17 +157,18 @@
     {
       "COLUMN": "pedidos.id",
       "ORIGINAL_TYPE": "serial",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "IS_AUTO_INCREMENT": true,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "nextval('pedidos_id_seq'::regclass)"
     },
     {
       "COLUMN": "pedidos.descricao",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -170,7 +176,7 @@
     {
       "COLUMN": "pedidos.usuario_id",
       "ORIGINAL_TYPE": "int4",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": true,
@@ -184,17 +190,18 @@
     {
       "COLUMN": "usuarios.id",
       "ORIGINAL_TYPE": "serial",
-      "CLASS_TYPE": "Integer",
+      "CLASS_TYPE": "java.lang.Integer",
       "SIZE": 11,
       "PRECISION": 10,
       "NULLABLE": false,
       "IS_AUTO_INCREMENT": true,
-      "PRIMARY_KEY": true
+      "PRIMARY_KEY": true,
+      "DEFAULT": "nextval('usuarios_id_seq'::regclass)"
     },
     {
       "COLUMN": "usuarios.nome",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
       "NULLABLE": true
@@ -202,10 +209,10 @@
     {
       "COLUMN": "usuarios.email",
       "ORIGINAL_TYPE": "varchar",
-      "CLASS_TYPE": "String",
+      "CLASS_TYPE": "java.lang.String",
       "SIZE": 100,
       "PRECISION": 100,
-      "NULLABLE": true,
+      "NULLABLE": false,
       "UNIQUE": true
     }
   ]

@@ -44,7 +44,8 @@ public class Metadata {
 
                 for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
                     Map<String, Object> info = new LinkedHashMap<>();
-                    info.put("COLUMN", tableName + "." + resultSetMetaData.getColumnName(i));
+                    String columnName = resultSetMetaData.getColumnName(i);
+                    info.put("COLUMN", tableName + "." + columnName);
                     info.put("ORIGINAL_TYPE", resultSetMetaData.getColumnTypeName(i));
                     info.put("CLASS_TYPE", resultSetMetaData.getColumnClassName(i));
                     info.put("SIZE", resultSetMetaData.getColumnDisplaySize(i));
@@ -68,6 +69,7 @@ public class Metadata {
             for (var tables : result.entrySet()) {
                 String tableName = tables.getKey();
                 for (var columns : tables.getValue()) {
+
                     ResultSet resultPrimaryKeys = metadata.getPrimaryKeys(null, null, tableName);
 
                     while (resultPrimaryKeys.next()) {
@@ -75,6 +77,17 @@ public class Metadata {
                         boolean condition = columns.get("COLUMN").equals(key);
                         if (condition) {
                             columns.put("PRIMARY_KEY", condition);
+                            PreparedStatement statement = con.prepareStatement(
+                                    "SELECT column_name, column_default FROM information_schema.columns WHERE table_name = '%s';"
+                                            .formatted(tableName));
+                            ResultSet moreInfo = statement.executeQuery();
+                            while (moreInfo.next()) {
+                                boolean nullable = (boolean) columns.get("NULLABLE");
+                                if (moreInfo.getString("column_name").equals(resultPrimaryKeys.getString("COLUMN_NAME"))
+                                        && !nullable) {
+                                    columns.put("DEFAULT", moreInfo.getString("column_default"));
+                                }
+                            }
                         }
                     }
 
@@ -137,4 +150,86 @@ public class Metadata {
         }
     }
 
+    // public static void main(String[] args) throws ClassNotFoundException,
+    // SQLException {
+    // Executor executor = new Executor();
+    // var result = executor.execute(connection -> {
+
+    // Map<String, List<Map<String, String>>> mappedDatabase = new
+    // LinkedHashMap<>();
+
+    // DatabaseMetaData databaseMetaData = connection.getMetaData();
+    // ResultSet resultTables = databaseMetaData.getTables(null, null, "%", new
+    // String[] { "TABLE" });
+
+    // String schema = connection.getSchema();
+
+    // while (resultTables.next()) {
+
+    // String tableName = resultTables.getString("TABLE_NAME");
+
+    // PreparedStatement statement = connection.prepareStatement("""
+    // SELECT
+    // cols.table_name,
+    // cols.column_name,
+    // cols.data_type,
+    // cols.character_maximum_length,
+    // cols.numeric_precision,
+    // cols.numeric_scale,
+    // cols.is_nullable,
+    // cols.column_default,
+    // cons.constraint_name,
+    // cons.constraint_type,
+    // cons.table_name AS referenced_table_name,
+    // cons2.column_name AS referenced_column_name,
+    // rc.update_rule,
+    // rc.delete_rule
+    // FROM
+    // information_schema.columns cols
+    // LEFT JOIN
+    // information_schema.key_column_usage kcu
+    // ON cols.table_schema = kcu.table_schema
+    // AND cols.table_name = kcu.table_name
+    // AND cols.column_name = kcu.column_name
+    // LEFT JOIN
+    // information_schema.table_constraints cons
+    // ON kcu.constraint_schema = cons.constraint_schema
+    // AND kcu.constraint_name = cons.constraint_name
+    // LEFT JOIN
+    // information_schema.referential_constraints rc
+    // ON cons.constraint_schema = rc.constraint_schema
+    // AND cons.constraint_name = rc.constraint_name
+    // LEFT JOIN
+    // information_schema.key_column_usage cons2
+    // ON rc.unique_constraint_schema = cons2.constraint_schema
+    // AND rc.unique_constraint_name = cons2.constraint_name
+    // AND kcu.position_in_unique_constraint = cons2.ordinal_position
+    // WHERE
+    // cols.table_schema = ?
+    // AND cols.table_name = ?""");
+
+    // statement.setString(1, schema);
+    // statement.setString(2, tableName);
+
+    // ResultSet resultSet = statement.executeQuery();
+    // ResultSetMetaData metadata = resultSet.getMetaData();
+    // int columnsNumber = metadata.getColumnCount();
+
+    // List<Map<String, String>> columns = new ArrayList<>();
+
+    // while (resultSet.next()) {
+
+    // Map<String, String> info = new LinkedHashMap<>();
+
+    // for (int i = 1; i <= columnsNumber; i++) {
+    // info.put(metadata.getColumnName(i), resultSet.getString(i));
+    // }
+
+    // columns.add(info);
+    // }
+    // mappedDatabase.put(tableName, columns);
+    // }
+    // return mappedDatabase;
+    // });
+    // }
 }

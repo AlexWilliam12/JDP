@@ -3,6 +3,7 @@ package com.teste.database.core;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -52,6 +53,9 @@ public class Structure {
             }
         }
 
+        Map<String, Map<String, Object>> standard = new LinkedHashMap<>();
+        Map<String, Object> subject = new LinkedHashMap<>();
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(mapper.writeValueAsString(metadata));
 
@@ -76,25 +80,32 @@ public class Structure {
                                         "A value must be entered for the '%s' field".formatted(key));
                             }
                             if (value != null) {
-                                value = objectType(value, Class.forName(className), node.get("SCALE").asInt());
+                                if (node.get("SCALE") != null) {
+                                    value = decimal(value, Class.forName(className), node.get("SCALE").asInt());
+                                } else if (value instanceof Number) {
+                                    value = integer(value, Class.forName(className));
+                                }
                                 if (!value.getClass().equals(Class.forName(className))) {
                                     throw new StructConstraintException(
                                             "The value of the '%s' key does not have a valid type to persist"
                                                     .formatted(key));
                                 }
-                                if (node.get("PRIMARY_KEY") != null && !annotationType(controllerClass)) {
+                                if (node.get("PRIMARY_KEY") != null && !annotationType(controllerClass)
+                                        && node.get("FOREIGN_KEY") == null && node.get("DEFAULT") != null) {
                                     throw new StructConstraintException(
                                             "Primary keys can only be passed in PUT methods");
                                 }
                             }
                         }
                     }
+                    subject.put(key, value);
                 }
             } else {
                 throw new StructConstraintException("There is no key representing a valid entity");
             }
+            standard.put(externalKey, subject);
         }
-        return body;
+        return standard;
     }
 
     private String standardize(String key) {
@@ -132,13 +143,9 @@ public class Structure {
         }
     }
 
-    private Object objectType(Object source, Class<?> compare, int scale) {
+    private Object decimal(Object source, Class<?> compare, int scale) {
         if (!(source instanceof Number)) {
             return source;
-        } else if (compare.equals(Integer.class)) {
-            return Integer.valueOf(source.toString());
-        } else if (compare.equals(Long.class)) {
-            return Long.valueOf(source.toString());
         } else if (compare.equals(BigDecimal.class)) {
             BigDecimal number = BigDecimal.valueOf(Double.valueOf(source.toString()));
             if (number.scale() > scale) {
@@ -167,12 +174,24 @@ public class Structure {
                 }
             }
             return number;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    private Object integer(Object source, Class<?> compare) {
+        if (!(source instanceof Number)) {
+            return source;
+        } else if (compare.equals(Integer.class)) {
+            return (int) Math.round(Double.parseDouble(source.toString()));
+        } else if (compare.equals(Long.class)) {
+            return (long) Math.round(Double.parseDouble(source.toString()));
         } else if (compare.equals(Short.class)) {
-            return Short.valueOf(source.toString());
+            return (short) Math.round(Double.parseDouble(source.toString()));
         } else if (compare.equals(Byte.class)) {
-            return Byte.valueOf((byte) source);
+            return (byte) Math.round(Double.parseDouble(source.toString()));
         } else if (compare.equals(BigInteger.class)) {
-            return BigInteger.valueOf(Long.valueOf(source.toString()));
+            return BigInteger.valueOf((long) Math.round(Double.parseDouble(source.toString())));
         } else {
             throw new NoSuchElementException();
         }
